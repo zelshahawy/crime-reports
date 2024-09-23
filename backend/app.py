@@ -34,7 +34,7 @@ def filtering_and_grouping(main_dataframe: pd.DataFrame, list_of_columns_of_inte
 @app.route('/api/home', methods=['GET'])
 def get_crime_data():
     crime_type = request.args.get('crime', '')
-    group_by = request.args.get('group_by', 'PRINCIPAL_SEX')
+    group_by = request.args.get('group_by', '')
 
     # Ensure crime_type is a valid column
     if crime_type not in filtered_by_age_and_adjusted_results.columns:
