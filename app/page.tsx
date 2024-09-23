@@ -13,7 +13,11 @@ const Home: React.FC = () => {
     useEffect(() => {
         const fetchData = async () => {
             try {
+                // Use the correct API endpoint
                 const response = await fetch(`https://thechosenmenace.pythonanywhere.com/api/home?crime=${searchQuery}&group_by=${groupBy}`);
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
                 const imageBlob = await response.blob();
                 const imageObjectUrl = URL.createObjectURL(imageBlob);
                 setImageUrl(imageObjectUrl);
@@ -21,7 +25,6 @@ const Home: React.FC = () => {
                 console.error('Error fetching data:', error);
             }
         };
-
         fetchData();
     }, [searchQuery, groupBy]);
 
