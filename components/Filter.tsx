@@ -11,9 +11,9 @@ const Filter: React.FC<FilterProps> = ({ onFilterChange }) => {
             className="w-full p-2 border border-gray-300 rounded-lg"
             onChange={(e) => onFilterChange(e.target.value)}
         >
-            <option value="AGE_GROUP">Age Group</option>
+            <option value="INCOME">Income Level</option>
             <option value="PRINCIPAL_SEX">Principal Sex</option>
-            <option value="REGION">Region</option>
+            <option value="PRINCIPAL_RACE">Race</option>
         </select>
     );
 };

@@ -4,32 +4,26 @@ import Head from 'next/head';
 import Header from '../components/Header';
 import Search from '../components/Search';
 import Filter from '../components/Filter';
-import CrimeGraph from '../components/CrimeGraph';
-
-interface GraphData {
-    labels: string[];
-    values: number[];
-}
 
 const Home: React.FC = () => {
     const [searchQuery, setSearchQuery] = useState<string>('');
-    const [groupBy, setGroupBy] = useState<string>('AGE_GROUP');
-    const [graphData, setGraphData] = useState<GraphData>({ labels: [], values: [] });
+    const [groupBy, setGroupBy] = useState<string>('PRINCIPAL_SEX');
+    const [imageUrl, setImageUrl] = useState<string>('');
 
     useEffect(() => {
         const fetchData = async () => {
             try {
-                const response = await fetch(`http://localhost:5000/api/crime-data?crime=${searchQuery}&group_by=${groupBy}`);
-                const data = await response.json();
-                setGraphData(data);
+                const response = await fetch(`http://localhost:8080/api/home?crime=${searchQuery}&group_by=${groupBy}`);
+                const imageBlob = await response.blob();
+                const imageObjectUrl = URL.createObjectURL(imageBlob);
+                setImageUrl(imageObjectUrl);
             } catch (error) {
                 console.error('Error fetching data:', error);
             }
         };
-    
+
         fetchData();
     }, [searchQuery, groupBy]);
-    
 
     return (
         <div>
@@ -48,8 +42,11 @@ const Home: React.FC = () => {
                 <div className="mt-8">
                     <p>Search Query: {searchQuery}</p>
                     <p>Group By: {groupBy}</p>
-                    <div className="mt-8">
-                        <CrimeGraph data={graphData} />
+                    <div className="mt-8 flex justify-center items-center">
+                        <div className="text-center">
+                            {imageUrl && <img src={imageUrl} alt="Crime Data Visualization" />}
+                            <p>Please review NCVS for the numbering references.</p>
+                        </div>
                     </div>
                 </div>
             </main>
