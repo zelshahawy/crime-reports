@@ -1,6 +1,9 @@
 from flask import Flask, request, jsonify
+from flask_cors import CORS
 import pandas as pd
 app = Flask(__name__)
+CORS(app)
+CORS(app, origins=["http://localhost:3000"])
 
 # Load the data
 crimes_data_2020 = pd.read_csv('midterm_project_NCVS_2020.csv')

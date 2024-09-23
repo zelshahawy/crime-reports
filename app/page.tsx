@@ -19,9 +19,8 @@ const Home: React.FC = () => {
     useEffect(() => {
         const fetchData = async () => {
             try {
-                const response = await fetch(`/api/crime-data?crime=${searchQuery}&group_by=${groupBy}`);
+                const response = await fetch(`http://localhost:5000/api/crime-data?crime=${searchQuery}&group_by=${groupBy}`);
                 const data = await response.json();
-                console.log('Fetched data:', data); // Add this line
                 setGraphData(data);
             } catch (error) {
                 console.error('Error fetching data:', error);
