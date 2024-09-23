@@ -7,13 +7,13 @@ import Filter from '../components/Filter';
 
 const Home: React.FC = () => {
     const [searchQuery, setSearchQuery] = useState<string>('');
-    const [groupBy, setGroupBy] = useState<string>('PRINCIPAL_SEX');
+    const [groupBy, setGroupBy] = useState<string>('');
     const [imageUrl, setImageUrl] = useState<string>('');
 
     useEffect(() => {
         const fetchData = async () => {
             try {
-                const response = await fetch(`http://localhost:8080/api/home?crime=${searchQuery}&group_by=${groupBy}`);
+                const response = await fetch(`https://thechosenmenace.pythonanywhere.com/api/home?crime=${searchQuery}&group_by=${groupBy}`);
                 const imageBlob = await response.blob();
                 const imageObjectUrl = URL.createObjectURL(imageBlob);
                 setImageUrl(imageObjectUrl);
