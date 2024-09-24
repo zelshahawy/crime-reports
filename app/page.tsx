@@ -49,7 +49,7 @@ const Home: React.FC = () => {
                         <div className="text-center">
                             {imageUrl && <img src={imageUrl} alt="Crime Data Visualization" />}
                             <p>Please review NCVS for the numbering references.</p>
-                            <p> If images are not displayed, it is probably because the backend api is not currently running for various reasons. Please contact me for updates and rerunning the backend </p>
+                            <p> Image generation can be a little slow due to usage of public backend deployer.</p>
                         </div>
                     </div>
                 </div>
