@@ -13,10 +13,10 @@ const Home: React.FC = () => {
     useEffect(() => {
         const fetchData = async () => {
             try {
-                // Use the correct API endpoint
-                const response = await fetch(`http://localhost:8080/api/home?crime=${searchQuery}&group_by=${groupBy}`);
+                const response = await fetch(`https://thechosenmenace.pythonanywhere.com/?crime=${searchQuery}&group_by=${groupBy}`);
                 if (!response.ok) {
-                    throw new Error('Network response was not ok');
+                    const errorText = await response.text();
+                    throw new Error(`Network response was not ok: ${errorText}`);
                 }
                 const imageBlob = await response.blob();
                 const imageObjectUrl = URL.createObjectURL(imageBlob);
