@@ -53,7 +53,7 @@ const Home: React.FC = () => {
                     <div className="mt-8 flex justify-center items-center">
                         <div className="text-center">
                             {imageUrl && <img src={imageUrl} alt="Crime Data Visualization" />}
-                            <p>Please review NCVS for the numbering references.</p>
+                            <p>Please review NCVS for the numbering references <a className='text-blue-500 hover:underline' href='https://bjs.ojp.gov/programs/ncvs#:~:text=Description,persons%20in%20about%20150%2C000%20households.'>here</a>.</p>
                             <p> Image generation can be a little slow due to usage of public backend deployer.</p>
                         </div>
                     </div>
