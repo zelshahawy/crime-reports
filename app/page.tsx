@@ -6,6 +6,7 @@ import Search from '../components/Search';
 import Filter from '../components/Filter';
 
 const Home: React.FC = () => {
+    const PATHTOCSV = './NCVS_2020.csv';
     const [searchQuery, setSearchQuery] = useState<string>('');
     const [groupBy, setGroupBy] = useState<string>('');
     const [imageUrl, setImageUrl] = useState<string>('');
@@ -55,6 +56,7 @@ const Home: React.FC = () => {
                             {imageUrl && <img src={imageUrl} alt="Crime Data Visualization" />}
                             <p>Please review NCVS for the numbering references <a className='text-blue-500 hover:underline' href='https://bjs.ojp.gov/programs/ncvs#:~:text=Description,persons%20in%20about%20150%2C000%20households.'>here</a>.</p>
                             <p> Image generation can be a little slow due to usage of public backend deployer.</p>
+                            <p> Please find the CSV file used in the analysis <a href={PATHTOCSV} download rel='noopener noreferrer'  className='text-blue-500 hover:underline'>here</a>.</p>
                         </div>
                     </div>
                 </div>
