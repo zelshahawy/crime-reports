@@ -14,7 +14,9 @@ const Home: React.FC = () => {
         const fetchData = async () => {
             try {
                 console.log(`Fetching data with searchQuery: ${searchQuery} and groupBy: ${groupBy}`);
-                const response = await fetch(`https://thechosenmenace.pythonanywhere.com/?crime=${searchQuery}&group_by=${groupBy}`);
+                const response = await fetch(`https://thechosenmenace.pythonanywhere.com/?crime=${searchQuery}&group_by=${groupBy}`, {
+                    mode: 'cors'
+                });
                 if (!response.ok) {
                     const errorText = await response.text();
                     throw new Error(`Network response was not ok: ${errorText}`);
