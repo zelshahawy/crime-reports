@@ -4,12 +4,14 @@ import Head from 'next/head';
 import Header from '../components/Header';
 import Search from '../components/Search';
 import Filter from '../components/Filter';
+import { Analytics } from "@vercel/analytics/react"
 
 const Home: React.FC = () => {
     const PATHTOCSV = './NCVS_2020.csv';
     const [searchQuery, setSearchQuery] = useState<string>('');
     const [groupBy, setGroupBy] = useState<string>('');
     const [imageUrl, setImageUrl] = useState<string>('');
+    const [isLoading, setIsLoading] = useState<boolean>(true);
 
     useEffect(() => {
         const fetchData = async () => {
@@ -28,6 +30,9 @@ const Home: React.FC = () => {
             } catch (error) {
                 console.error('Error fetching data:', error);
             }
+            finally {
+                setIsLoading(false);
+            }
         };
         if (searchQuery && groupBy) {
             fetchData();
@@ -40,6 +45,7 @@ const Home: React.FC = () => {
                 <title>NCVS Crime Analysis</title>
                 <meta name="description" content="Analyze crime data with filters and visualizations" />
                 <link rel="icon" href="/favicon.ico" />
+                <Analytics  />
             </Head>
 
             <Header />
@@ -53,6 +59,7 @@ const Home: React.FC = () => {
                     <p>Group By: {groupBy}</p>
                     <div className="mt-8 flex justify-center items-center">
                         <div className="text-center">
+                            {isLoading && <p>Please enter your filters</p>}
                             {imageUrl && <img src={imageUrl} alt="Crime Data Visualization" />}
                             <p>Please review NCVS for the numbering references <a className='text-blue-500 hover:underline' href='https://bjs.ojp.gov/programs/ncvs#:~:text=Description,persons%20in%20about%20150%2C000%20households.'>here</a>.</p>
                             <p> Image generation can be a little slow due to usage of public backend deployer.</p>
