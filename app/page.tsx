@@ -13,6 +13,7 @@ const Home: React.FC = () => {
     useEffect(() => {
         const fetchData = async () => {
             try {
+                console.log(`Fetching data with searchQuery: ${searchQuery} and groupBy: ${groupBy}`);
                 const response = await fetch(`https://thechosenmenace.pythonanywhere.com/?crime=${searchQuery}&group_by=${groupBy}`);
                 if (!response.ok) {
                     const errorText = await response.text();
@@ -25,7 +26,9 @@ const Home: React.FC = () => {
                 console.error('Error fetching data:', error);
             }
         };
-        fetchData();
+        if (searchQuery && groupBy) {
+            fetchData();
+        }
     }, [searchQuery, groupBy]);
 
     return (

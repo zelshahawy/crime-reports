@@ -16,11 +16,10 @@ const Search: React.FC<SearchProps> = ({ onSearch }) => {
         <option value="FORCED_SEX">Forced Sex</option>
         <option value="VEHICLE_THEFT">Vehicle Theft</option>
         <option value="BROKEN_IN">Broken In</option>
-        <option value='TOTAL_OF_THREE_CRIMES'>Total of the three crimes </option>
+        <option value="TOTAL_OF_THREE_CRIMES">Total of the three crimes</option>
       </select>
     </div>
   );
 };
 
 export default Search;
-
