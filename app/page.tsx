@@ -45,12 +45,12 @@ const Home: React.FC = () => {
                 <title>NCVS Crime Analysis</title>
                 <meta name="description" content="Analyze crime data with filters and visualizations" />
                 <link rel="icon" href="/favicon.ico" />
-                <Analytics  />
             </Head>
 
             <Header />
 
             <main className="p-8">
+                <Analytics  />
                 <h2 className="text-xl mb-4">Search and Filter Crimes</h2>
                 <Search onSearch={setSearchQuery} />
                 <Filter onFilterChange={setGroupBy} />
