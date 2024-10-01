@@ -4,6 +4,7 @@ import Head from 'next/head';
 import Header from '../components/Header';
 import Search from '../components/Search';
 import Filter from '../components/Filter';
+import Footer from '../components/Footer';
 import { Analytics } from "@vercel/analytics/react"
 
 const Home: React.FC = () => {
@@ -67,6 +68,9 @@ const Home: React.FC = () => {
                     </div>
                 </div>
             </main>
+            <footer>
+                <Footer />
+            </footer>
         </div>
     );
 };
