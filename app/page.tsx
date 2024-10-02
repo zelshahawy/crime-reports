@@ -1,6 +1,5 @@
 "use client";
 import React, { useState, useEffect } from 'react';
-import Head from 'next/head';
 import Header from '../components/Header';
 import Search from '../components/Search';
 import Filter from '../components/Filter';
@@ -42,12 +41,6 @@ const Home: React.FC = () => {
 
     return (
         <div>
-            <Head>
-                <title>NCVS Crime Analysis</title>
-                <meta name="description" content="Analyze crime data with filters and visualizations" />
-                <link rel="icon" href="/favicon.ico" />
-            </Head>
-
             <Header />
 
             <main className="p-8">
