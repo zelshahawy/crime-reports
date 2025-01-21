@@ -39,8 +39,8 @@ def filter_and_adjust_age_group(df: pd.DataFrame) -> pd.DataFrame:
     filtered_df['VEHICLE_THEFT'] = filtered_df['VEHICLE_THEFT'].apply(adjusted_func)
     filtered_df['FORCED_SEX'] = filtered_df['FORCED_SEX'].apply(adjusted_func)
     filtered_df['TOTAL_OF_THREE_CRIMES'] = (
-        filtered_df['BROKEN_IN'] 
-        + filtered_df['FORCED_SEX'] 
+        filtered_df['BROKEN_IN']
+        + filtered_df['FORCED_SEX']
         + filtered_df['VEHICLE_THEFT']
     )
     return filtered_df
