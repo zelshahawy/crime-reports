@@ -25,7 +25,7 @@ const Filter: React.FC<FilterProps> = ({ onFilterChange }) => {
             <option value="JOB">Job</option>
             <option value="PRINCIPAL_MARITAL">Marital Status</option>
             <option value="PRINCIPAL_ED">Education Level</option>
-            <option value="NUM_INCIDENTS">Number of ncidents</option>
+            <option value="NUM_INCIDENTS">Number of Incidents</option>
         </select>
     );
 };

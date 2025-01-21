@@ -46,8 +46,8 @@ const Home: React.FC = () => {
             <main className="p-8">
                 <Analytics  />
                 <h2 className="text-xl mb-4">Search and Filter Crimes</h2>
-                <Search onSearch={setSearchQuery} />
                 <Filter onFilterChange={setGroupBy} />
+                <Search onSearch={setSearchQuery} />
                 <div className="mt-8">
                     <p>Search Query: {searchQuery}</p>
                     <p>Group By: {groupBy}</p>
