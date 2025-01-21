@@ -20,7 +20,6 @@ const Filter: React.FC<FilterProps> = ({ onFilterChange }) => {
             <option value="PRINCIPAL_SEX">Principal Sex</option>
             <option value="INCOME">Income Level</option>
             <option value="PRINCIPAL_RACE">Race</option>
-            <option value="PRINCIPAL_AGE">Age</option>
             <option value="ATT_COLLEGE">Attended College</option>
             <option value="JOB">Job</option>
             <option value="PRINCIPAL_MARITAL">Marital Status</option>
