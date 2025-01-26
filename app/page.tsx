@@ -5,6 +5,7 @@ import Search from '../components/Search';
 import Filter from '../components/Filter';
 import Footer from '../components/Footer';
 import CrimeChart from '../components/CrimeChart';
+
 import { ChartData } from 'chart.js';
 
 const Home: React.FC = () => {
@@ -12,13 +13,14 @@ const Home: React.FC = () => {
   const [groupBy, setGroupBy] = useState<string>('');
   const [chartData, setChartData] = useState<ChartData<'bar'> | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(true);
+  const apiUrl = "https://thechosenmenace.pythonanywhere.com";
 
   useEffect(() => {
     const fetchData = async () => {
       try {
         if (!searchQuery || !groupBy) return;
         setIsLoading(true);
-        const response = await fetch(`https://thechosenmenace.pythonanywhere.com/?crime=${searchQuery}&group_by=${groupBy}`);
+        const response = await fetch(`${apiUrl}/crimes?search=${searchQuery}&groupBy=${groupBy}`);
         if (!response.ok) throw new Error(`Error: ${response.statusText}`);
         const data = await response.json();
         setChartData(data);
