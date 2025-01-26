@@ -5,11 +5,12 @@ import Search from '../components/Search';
 import Filter from '../components/Filter';
 import Footer from '../components/Footer';
 import CrimeChart from '../components/CrimeChart';
+import { ChartData } from 'chart.js';
 
 const Home: React.FC = () => {
   const [searchQuery, setSearchQuery] = useState<string>('');
   const [groupBy, setGroupBy] = useState<string>('');
-  const [chartData, setChartData] = useState<any>(null);
+  const [chartData, setChartData] = useState<ChartData<'bar'> | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(true);
 
   useEffect(() => {
