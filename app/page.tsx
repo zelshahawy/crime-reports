@@ -18,7 +18,7 @@ const Home: React.FC = () => {
       try {
         if (!searchQuery || !groupBy) return;
         setIsLoading(true);
-        const response = await fetch(`ttps://thechosenmenace.pythonanywhere.com/?crime=${searchQuery}&group_by=${groupBy}`);
+        const response = await fetch(`https://thechosenmenace.pythonanywhere.com/?crime=${searchQuery}&group_by=${groupBy}`);
         if (!response.ok) throw new Error(`Error: ${response.statusText}`);
         const data = await response.json();
         setChartData(data);
