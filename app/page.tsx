@@ -13,14 +13,14 @@ const Home: React.FC = () => {
   const [groupBy, setGroupBy] = useState<string>('');
   const [chartData, setChartData] = useState<ChartData<'bar'> | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(true);
-  const apiUrl = process.env.PYTHON_PUBLIC_API_URL;
+  const apiUrl = "https://thechosenmenace.pythonanywhere.com";
 
   useEffect(() => {
     const fetchData = async () => {
       try {
         if (!searchQuery || !groupBy) return;
         setIsLoading(true);
-        const response = await fetch(`${apiUrl}/crimes?search=${searchQuery}&groupBy=${groupBy}`);
+        const response = await fetch(`${apiUrl}/?crime=${searchQuery}&group_by=${groupBy}`);
         if (!response.ok) throw new Error(`Error: ${response.statusText}`);
         const data = await response.json();
         setChartData(data);
