@@ -4,7 +4,6 @@ matplotlib.use('Agg')
 from flask import Flask, request, jsonify
 from flask_cors import CORS
 import pandas as pd
-import io
 import matplotlib.pyplot as plt
 
 app = Flask(__name__)
@@ -88,4 +87,4 @@ def get_crime_data():
     return jsonify(json_data)
 
 if __name__ == "__main__":
-    app.run(port=5050)
+    app.run(port=5050, debug=True)

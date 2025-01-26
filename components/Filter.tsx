@@ -5,7 +5,7 @@ interface FilterProps {
 }
 
 const Filter: React.FC<FilterProps> = ({ onFilterChange }) => {
-    const [selectedFilter, setSelectedFilter] = useState<string>('INCOME'); // Default to "INCOME"
+    const [selectedFilter, setSelectedFilter] = useState<string>('PRINCIPAL_SEX'); // Default to "INCOME"
 
     useEffect(() => {
         onFilterChange(selectedFilter); // Apply the default filter on component mount
@@ -17,7 +17,7 @@ const Filter: React.FC<FilterProps> = ({ onFilterChange }) => {
             value={selectedFilter}
             onChange={(e) => setSelectedFilter(e.target.value)}
 >  
-            <option value="PRINCIPAL_SEX">Principal Sex</option>
+            <option value="PRINCIPAL_SEX">Sex</option>
             <option value="INCOME">Income Level</option>
             <option value="PRINCIPAL_RACE">Race</option>
             <option value="ATT_COLLEGE">Attended College</option>
