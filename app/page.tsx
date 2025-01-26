@@ -12,14 +12,12 @@ const Home: React.FC = () => {
   const [searchQuery, setSearchQuery] = useState<string>('');
   const [groupBy, setGroupBy] = useState<string>('');
   const [chartData, setChartData] = useState<ChartData<'bar'> | null>(null);
-  const [isLoading, setIsLoading] = useState<boolean>(true);
   const apiUrl = "https://thechosenmenace.pythonanywhere.com";
 
   useEffect(() => {
     const fetchData = async () => {
       try {
         if (!searchQuery || !groupBy) return;
-        setIsLoading(true);
         const response = await fetch(`${apiUrl}/?crime=${searchQuery}&group_by=${groupBy}`);
         if (!response.ok) throw new Error(`Error: ${response.statusText}`);
         const data = await response.json();
@@ -27,7 +25,6 @@ const Home: React.FC = () => {
       } catch (error) {
         console.error('Error fetching data:', error);
       } finally {
-        setIsLoading(false);
       }
     };
     fetchData();
@@ -41,11 +38,9 @@ const Home: React.FC = () => {
         <Filter onFilterChange={setGroupBy} />
         <Search onSearch={setSearchQuery} />
         <div className="mt-8 flex justify-center items-center">
-          {isLoading ? (
-            <p>Loading chart...</p>
-          ) : chartData ? (
+          {chartData ? (
             <div className="w-full max-w-4xl p-4 bg-white rounded-lg shadow-md">
-            <CrimeChart data={chartData} />
+              <CrimeChart data={chartData} />
             </div>
           ) : (
             <p>Please select filters to generate a chart.</p>
