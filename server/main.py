@@ -1,106 +1,91 @@
 import matplotlib
-matplotlib.use('Agg')  # Use the Agg backend for non-GUI environments
+matplotlib.use('Agg')
 
-from fastapi import FastAPI, HTTPException
-from fastapi.responses import JSONResponse, StreamingResponse
-from fastapi.middleware.cors import CORSMiddleware
+from flask import Flask, request, jsonify
+from flask_cors import CORS
 import pandas as pd
 import io
 import matplotlib.pyplot as plt
 
-# Initialize FastAPI app
-app = FastAPI()
-
-# Enable CORS (if needed for cross-domain requests, e.g. from a frontend)
-app.add_middleware(
-    CORSMiddleware,
-    allow_origins=["*"],  # Or specify ['http://localhost:3000'] etc.
-    allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
-)
-
-# Read your CSV data
+app = Flask(__name__)
+CORS(app)
 crimes_data_2020 = pd.read_csv('NCVS_2020.csv')
+all_crime = crimes_data_2020.copy()
 
 def filter_and_adjust_age_group(df: pd.DataFrame) -> pd.DataFrame:
     """
-    Adjusts the crime columns to binary indicators and calculates the total of three crimes.
+    Filters and adjusts specific columns in the DataFrame to binary values.
 
-    Args:
-        df (pd.DataFrame): The input DataFrame containing crime data.
+    This function takes a DataFrame and applies a transformation to the 'BROKEN_IN',
+    'VEHICLE_THEFT', and 'FORCED_SEX' columns. The transformation converts the values
+    in these columns to binary values: 1 if the original value is 1, otherwise 0.
+
+    Parameters:
+    df (pd.DataFrame): The input DataFrame containing the columns to be adjusted.
 
     Returns:
-        pd.DataFrame: The adjusted DataFrame with binary crime indicators and a total crime column.
+    pd.DataFrame: A new DataFrame with the specified columns adjusted to binary values.
     """
     adjusted_func = lambda x: 1 if x == 1 else 0
     filtered_df = df.copy()
     filtered_df['BROKEN_IN'] = filtered_df['BROKEN_IN'].apply(adjusted_func)
     filtered_df['VEHICLE_THEFT'] = filtered_df['VEHICLE_THEFT'].apply(adjusted_func)
     filtered_df['FORCED_SEX'] = filtered_df['FORCED_SEX'].apply(adjusted_func)
-    filtered_df['TOTAL_OF_THREE_CRIMES'] = (
-        filtered_df['BROKEN_IN']
-        + filtered_df['FORCED_SEX']
-        + filtered_df['VEHICLE_THEFT']
-    )
+    filtered_df['TOTAL_CRIME'] = filtered_df['BROKEN_IN'] + filtered_df['VEHICLE_THEFT'] + filtered_df['FORCED_SEX']
     return filtered_df
 
 filtered_by_age_and_adjusted_results = filter_and_adjust_age_group(crimes_data_2020)
 
-def filtering_and_grouping(
-    main_dataframe: pd.DataFrame,
-    list_of_columns_of_interest: list,
-    variable: str
-) -> pd.DataFrame:
+def filtering_and_grouping(main_dataframe: pd.DataFrame, list_of_columns_of_interest: list, variable: str) -> pd.DataFrame:
     """
-    Groups the DataFrame by a specified variable and calculates 
-    the mean for the columns of interest.
-    
-    Args:
-        main_dataframe (pd.DataFrame): The input DataFrame to be grouped.
-        list_of_columns_of_interest (list): The columns for which the mean is calculated.
-        variable (str): The column by which to group the DataFrame.
+    Groups the DataFrame by a specified variable and calculates the mean of selected columns.
+
+    This function takes a DataFrame and groups it by the specified variable. It then calculates
+    the mean for each group for the columns listed in `list_of_columns_of_interest`.
+
+    Parameters:
+    main_dataframe (pd.DataFrame): The input DataFrame containing the data to be grouped.
+    list_of_columns_of_interest (list): A list of column names for which the mean will be calculated.
+    variable (str): The column name by which to group the DataFrame.
 
     Returns:
-        pd.DataFrame: The grouped DataFrame with mean values.
+    pd.DataFrame: A new DataFrame with the mean values of the specified columns for each group.
     """
     grouped_data_mean = main_dataframe.groupby(variable)[list_of_columns_of_interest].mean()
     return grouped_data_mean
 
-@app.get("/api/home")
-def get_crime_data(crime: str, group_by: str):
+@app.route('/', methods=['GET'])
+def get_crime_data():
     """
-    API endpoint to get crime data based on the specified crime type and grouping variable.
+    Retrieves crime data based on query parameters and returns it as JSON.
 
     Query Parameters:
-        crime (str): The type of crime to analyze (e.g., 'BROKEN_IN').
-        group_by (str): The variable by which to group the data (e.g., 'AGE').
+    crime (str): The type of crime to analyze.
+    group_by (str): The column by which to group the data.
 
     Returns:
-        A PNG image (bar plot) or a JSON error message.
+    JSON: The grouped data or an error message.
     """
-    # Validate the requested crime column
-    if crime not in filtered_by_age_and_adjusted_results.columns:
-        raise HTTPException(status_code=400, detail="Invalid crime type")
+    crime_type = request.args.get('crime', '')
+    group_by = request.args.get('group_by', '')
+    
+    if crime_type not in filtered_by_age_and_adjusted_results.columns:
+        return jsonify({"error": "Invalid crime type"}), 400
 
-    # Group the data
-    grouped_data = filtering_and_grouping(filtered_by_age_and_adjusted_results, [crime], group_by)
+    grouped_data = filtering_and_grouping(filtered_by_age_and_adjusted_results, [crime_type], group_by)
 
-    # Create the plot
-    fig = grouped_data.plot(
-        kind='bar',
-        y=crime,
-        legend=False,
-        title=f'{crime} by {group_by}'
-    ).get_figure()
-    plt.xlabel(group_by)
-    plt.ylabel(f'{crime} AVERAGES')
+    # Convert the grouped DataFrame to a JSON-compatible format
+    json_data = {
+        "labels": grouped_data.index.tolist(),
+        "datasets": [{
+            "label": crime_type,
+            "data": grouped_data[crime_type].tolist(),
+            "backgroundColor": "rgba(75, 192, 192, 0.2)",
+            "borderColor": "rgba(75, 192, 192, 1)",
+            "borderWidth": 1,
+        }]
+    }
+    return jsonify(json_data)
 
-    # Save figure to an in-memory bytes buffer
-    img = io.BytesIO()
-    fig.savefig(img, format='png')
-    img.seek(0)
-    plt.close(fig)
-
-    # Return as a streaming response (PNG image)
-    return StreamingResponse(img, media_type="image/png")
+if __name__ == "__main__":
+    app.run(port=5050)

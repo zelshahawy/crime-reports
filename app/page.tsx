@@ -4,68 +4,55 @@ import Header from '../components/Header';
 import Search from '../components/Search';
 import Filter from '../components/Filter';
 import Footer from '../components/Footer';
-import { Analytics } from "@vercel/analytics/react"
+import CrimeChart from '../components/CrimeChart';
 
 const Home: React.FC = () => {
-    const PATHTOCSV = './NCVS_2020.csv';
-    const [searchQuery, setSearchQuery] = useState<string>('');
-    const [groupBy, setGroupBy] = useState<string>('');
-    const [imageUrl, setImageUrl] = useState<string>('');
-    const [isLoading, setIsLoading] = useState<boolean>(true);
+  const [searchQuery, setSearchQuery] = useState<string>('');
+  const [groupBy, setGroupBy] = useState<string>('');
+  const [chartData, setChartData] = useState<any>(null);
+  const [isLoading, setIsLoading] = useState<boolean>(true);
 
-    useEffect(() => {
-        const fetchData = async () => {
-            try {
-                console.log(`Fetching data with searchQuery: ${searchQuery} and groupBy: ${groupBy}`);
-                const response = await fetch(`https://thechosenmenace.pythonanywhere.com/?crime=${searchQuery}&group_by=${groupBy}`, {
-                    mode: 'cors'
-                });
-                if (!response.ok) {
-                    const errorText = await response.text();
-                    throw new Error(`Network response was not ok: ${errorText}`);
-                }
-                const imageBlob = await response.blob();
-                const imageObjectUrl = URL.createObjectURL(imageBlob);
-                setImageUrl(imageObjectUrl);
-            } catch (error) {
-                console.error('Error fetching data:', error);
-            }
-            finally {
-                setIsLoading(false);
-            }
-        };
-        if (searchQuery && groupBy) {
-            fetchData();
-        }
-    }, [searchQuery, groupBy]);
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        if (!searchQuery || !groupBy) return;
+        setIsLoading(true);
+        const response = await fetch(`ttps://thechosenmenace.pythonanywhere.com/?crime=${searchQuery}&group_by=${groupBy}`);
+        if (!response.ok) throw new Error(`Error: ${response.statusText}`);
+        const data = await response.json();
+        setChartData(data);
+      } catch (error) {
+        console.error('Error fetching data:', error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+    fetchData();
+  }, [searchQuery, groupBy]);
 
-    return (
-        <div>
-            <Header />
-
-            <main className="p-8">
-                <Analytics  />
-                <h2 className="text-xl mb-4">Search and Filter Crimes</h2>
-                <Filter onFilterChange={setGroupBy} />
-                <Search onSearch={setSearchQuery} />
-                <div className="mt-8">
-                    <p>Search Query: {searchQuery}</p>
-                    <p>Group By: {groupBy}</p>
-                    <div className="mt-8 flex justify-center items-center">
-                        <div className="text-center">
-                            {isLoading && <p>Please enter your filters</p>}
-                            {imageUrl && <img src={imageUrl} alt="Crime Data Visualization" />}
-                            <p>Please review NCVS for the numbering references <a className='text-blue-500 hover:underline' href='https://bjs.ojp.gov/programs/ncvs#:~:text=Description,persons%20in%20about%20150%2C000%20households.'>here</a>.</p>
-                            <p> Please find the CSV file used in the analysis <a href={PATHTOCSV} download rel='noopener noreferrer'  className='text-blue-500 hover:underline'>here</a>.</p>
-                        </div>
-                    </div>
-                </div>
-            </main>
-            <footer>
-                <Footer />
-            </footer>
+  return (
+    <div>
+      <Header />
+      <main className="p-8">
+        <h2 className="text-xl mb-4">Search and Filter Crimes</h2>
+        <Filter onFilterChange={setGroupBy} />
+        <Search onSearch={setSearchQuery} />
+        <div className="mt-8 flex justify-center items-center">
+          {isLoading ? (
+            <p>Loading chart...</p>
+          ) : chartData ? (
+            <div className="w-full max-w-4xl p-4 bg-white rounded-lg shadow-md">
+            <CrimeChart data={chartData} />
+            </div>
+          ) : (
+            <p>Please select filters to generate a chart.</p>
+          )}
         </div>
-    );
+      </main>
+      <Footer />
+    </div>
+  );
 };
 
 export default Home;
+
