@@ -13,7 +13,7 @@ const Home: React.FC = () => {
   const [groupBy, setGroupBy] = useState<string>('');
   const [chartData, setChartData] = useState<ChartData<'bar'> | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(true);
-  const apiUrl = "https://thechosenmenace.pythonanywhere.com";
+  const apiUrl = process.env.PYTHON_PUBLIC_API_URL;
 
   useEffect(() => {
     const fetchData = async () => {
