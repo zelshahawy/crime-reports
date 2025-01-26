@@ -78,7 +78,7 @@ def get_crime_data():
     json_data = {
         "labels": grouped_data.index.tolist(),
         "datasets": [{
-            "label": crime_type,
+            "label": f"{crime_type}_AVERAGES",
             "data": grouped_data[crime_type].tolist(),
             "backgroundColor": "rgba(75, 192, 192, 0.2)",
             "borderColor": "rgba(75, 192, 192, 1)",

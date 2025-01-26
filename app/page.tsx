@@ -40,7 +40,7 @@ const Home: React.FC = () => {
         <div className="mt-8 flex justify-center items-center">
           {chartData ? (
             <div className="w-full max-w-4xl p-4 bg-white rounded-lg shadow-md">
-              <CrimeChart data={chartData} />
+              <CrimeChart data={chartData} searchQuery={searchQuery} groupBy={groupBy} />
             </div>
           ) : (
             <p>Please select filters to generate a chart.</p>
