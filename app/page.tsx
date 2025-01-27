@@ -18,7 +18,7 @@ const Home: React.FC = () => {
     const fetchData = async () => {
       try {
         if (!searchQuery || !groupBy) return;
-        const response = await fetch(`${apiUrl}/?crime=${searchQuery}&group_by=${groupBy}`);
+        const response = await fetch(`${apiUrl}/crime_data?crime=${searchQuery}&group_by=${groupBy}`);
         if (!response.ok) throw new Error(`Error: ${response.statusText}`);
         const data = await response.json();
         setChartData(data);
