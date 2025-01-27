@@ -39,7 +39,7 @@ const Home: React.FC = () => {
         <Search onSearch={setSearchQuery} />
         <div className="mt-8 flex justify-center items-center">
           {chartData ? (
-            <div className="w-full max-w-4xl p-4 bg-white rounded-lg shadow-md min-h-[400px]">
+            <div className="w-full max-w-4xl p-3 bg-white rounded-lg shadow-md min-h-[200px]">
               <CrimeChart data={chartData} searchQuery={searchQuery} groupBy={groupBy} />
             </div>
           ) : (

@@ -39,7 +39,7 @@ const CrimeChart: React.FC<CrimeChartProps> = ({ data, searchQuery, groupBy }) =
     },
   };
 
-  return <Bar options={options} data={data} />;
+  return <Bar className='min-h-[200px]' options={options} data={data} />;
 };
 
 export default CrimeChart;
