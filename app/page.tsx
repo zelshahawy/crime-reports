@@ -32,7 +32,6 @@ const Home: React.FC = () => {
 
   return (
     <div>
-      <Header />
       <main className="p-8">
         <h2 className="text-xl mb-4">Search and Filter Crimes</h2>
         <Filter onFilterChange={setGroupBy} />
@@ -47,7 +46,6 @@ const Home: React.FC = () => {
           )}
         </div>
       </main>
-      <Footer />
     </div>
   );
 };
