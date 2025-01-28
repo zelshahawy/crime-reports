@@ -16,7 +16,7 @@ const Search: React.FC<SearchProps> = ({ onSearch }) => {
         <option value="FORCED_SEX">Forced Sexual Assault</option>
         <option value="VEHICLE_THEFT">Vehicle Theft</option>
         <option value="BROKEN_IN">Broken In</option>
-        <option value="TOTAL_CRIME">Total of the three crimes</option>
+        <option value="TOTAL_CRIME">Total of the Three Crimes</option>
       </select>
     </div>
   );

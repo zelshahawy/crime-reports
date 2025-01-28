@@ -1,9 +1,7 @@
 "use client";
 import React, { useState, useEffect } from 'react';
-import Header from '../components/Header';
 import Search from '../components/Search';
 import Filter from '../components/Filter';
-import Footer from '../components/Footer';
 import CrimeChart from '../components/CrimeChart';
 
 import { ChartData } from 'chart.js';
