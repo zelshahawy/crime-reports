@@ -1,18 +1,25 @@
-import React from 'react';
+// filepath: /Users/ziadelshahawy/personal-projects/crime-report-web-app/components/Search.tsx
+import React, { useState, useEffect } from 'react';
 
 interface SearchProps {
-  onSearch: (query: string) => void;
+  onSearchChange: (search: string) => void;
 }
 
-const Search: React.FC<SearchProps> = ({ onSearch }) => {
+const Search: React.FC<SearchProps> = ({ onSearchChange }) => {
+  const [selectedSearch, setSelectedSearch] = useState<string>('FORCED_SEX');
+
+  useEffect(() => {
+    onSearchChange(selectedSearch);
+  }, [selectedSearch, onSearchChange]);
+
   return (
-    <div>
+    <div className="flex flex-col space-y-2">
+      <label className="text-sm font-medium text-gray-700">Search Crime Type</label>
       <select
-        className="w-full p-2 border border-gray-300 rounded-lg"
-        onChange={(e) => onSearch(e.target.value)}
-        defaultValue=""
+        className="w-full p-3 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 hover:border-blue-400 transition"
+        onChange={(e) => setSelectedSearch(e.target.value)}
+        value={selectedSearch}
       >
-        <option value="" disabled>Select a crime type...</option>
         <option value="FORCED_SEX">Forced Sexual Assault</option>
         <option value="VEHICLE_THEFT">Vehicle Theft</option>
         <option value="BROKEN_IN">Broken In</option>

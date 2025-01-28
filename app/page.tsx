@@ -30,20 +30,24 @@ const Home: React.FC = () => {
 
   return (
     <div>
-      <main className="p-8">
-        <h2 className="text-xl mb-4">Search and Filter Crimes</h2>
-        <Filter onFilterChange={setGroupBy} />
-        <Search onSearch={setSearchQuery} />
-        <div className="mt-8 flex justify-center items-center">
-          {chartData ? (
-            <div className="w-full max-w-4xl p-3 bg-white rounded-lg shadow-md min-h-[200px]">
-              <CrimeChart data={chartData} searchQuery={searchQuery} groupBy={groupBy} />
-            </div>
-          ) : (
-            <p>Please select filters to generate a chart.</p>
-          )}
-        </div>
-      </main>
+<main className="flex-grow p-8">
+                <h2 className="text-2xl font-bold mb-4 text-gray-800 text-center">Search and Filter Crimes</h2>
+                <div className="max-w-4xl mx-auto space-y-4">
+                    <div className="bg-white p-6 rounded-lg shadow-md space-y-6">
+                        <Filter onFilterChange={setGroupBy} />
+                        <Search onSearchChange={setSearchQuery} />
+                    </div>
+                    <div className="mt-8 flex justify-center items-center">
+                        {chartData ? (
+                            <div className="w-full max-w-4xl p-4 bg-white rounded-lg shadow-md min-h-[400px]">
+                                <CrimeChart data={chartData} searchQuery={searchQuery} groupBy={groupBy} />
+                            </div>
+                        ) : (
+                            <p className="text-gray-600 text-center">Please select filters to generate a chart.</p>
+                        )}
+                    </div>
+                </div>
+            </main>
     </div>
   );
 };

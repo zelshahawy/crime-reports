@@ -3,6 +3,7 @@ import { SpeedInsights } from "@vercel/speed-insights/next"
 import localFont from "next/font/local";
 import Header from "../components/Header";
 import Footer from "../components/Footer";
+import Contact from "../components/ContactForm";
 
 
 import "./globals.css";
