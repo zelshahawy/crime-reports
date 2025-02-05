@@ -10,7 +10,7 @@ const Home: React.FC = () => {
   const [searchQuery, setSearchQuery] = useState<string>('');
   const [groupBy, setGroupBy] = useState<string>('');
   const [chartData, setChartData] = useState<ChartData<'bar'> | null>(null);
-  const apiUrl = "https://thechosenmenace.pythonanywhere.com";
+  const apiUrl = process.env.NEXT_PUBLIC_API_URL;
 
   useEffect(() => {
     const fetchData = async () => {
