@@ -85,7 +85,7 @@ def get_crime_data():
             "borderWidth": 1,
         }]
     }
-    return jsonify(json_data)
+    return jsonify(json_data), 200
 
 if __name__ == "__main__":
     app.run(port=5050, debug=True)
