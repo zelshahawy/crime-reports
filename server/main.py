@@ -7,7 +7,8 @@ import pandas as pd
 import matplotlib.pyplot as plt
 
 app = Flask(__name__)
-CORS(app)
+CORS(app, resources={r"/*": {"origins": ["https://crime-report-web-app.vercel.app"]}})
+
 crimes_data_2020 = pd.read_csv('NCVS_2020.csv')
 all_crime = crimes_data_2020.copy()
 
