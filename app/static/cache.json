@@ -1,0 +1,17 @@
+{
+    "datasets": [
+        {
+            "backgroundColor": "rgba(75, 192, 192, 0.2)",
+            "borderColor": "rgba(75, 192, 192, 1)",
+            "borderWidth": 1,
+            "data": [
+                0.008695652173913044,
+                0.013561024610748368
+            ]
+        }
+    ],
+    "labels": [
+        1,
+        2
+    ]
+}
