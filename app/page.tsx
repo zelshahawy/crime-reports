@@ -1,9 +1,9 @@
 "use client";
-import React, { useState, useEffect } from 'react';
-import Search from '../components/Search';
-import Filter from '../components/Filter';
+import React, { useEffect, useState } from 'react';
 import CrimeChart from '../components/CrimeChart';
-import FORCED_TO_ASSAULT_CACHE from "./static/cache.json"
+import Filter from '../components/Filter';
+import Search from '../components/Search';
+import FORCED_TO_ASSAULT_CACHE from "./static/cache.json";
 
 import { ChartData } from 'chart.js';
 
@@ -15,12 +15,23 @@ const Home: React.FC = () => {
 
   const FORCED_TO_ASSAULT_DATASET: ChartData<'bar'> = FORCED_TO_ASSAULT_CACHE as ChartData<'bar'>;
 
+  const wake_up_server = async () => {
+    try {
+      const response = await fetch(`${apiUrl}/ping`, { method: 'GET' });
+      if (!response.ok) throw new Error(`Error: ${response.statusText}`);
+      console.log('Server woken up successfully');
+    } catch (error) {
+      console.error('Error waking up server:', error);
+    }
+  };
+
   useEffect(() => {
     const fetchData = async () => {
       try {
         if (!searchQuery || !groupBy) return;
         if (searchQuery === "FORCED_SEX" && groupBy === "PRINCIPAL_SEX") {
           setChartData(FORCED_TO_ASSAULT_DATASET);
+          wake_up_server();
           console.log('Used cached data');
           return;
         }
