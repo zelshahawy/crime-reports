@@ -16,7 +16,7 @@ const DataTable: React.FC<DataTableProps> = ({ data, groupBy, searchQuery }) => 
 			<thead>
 				<tr>
 					<th className="px-4 py-2 border-b">{groupBy}</th>
-					<th className="px-4 py-2 border-b">{searchQuery}_Avg</th>
+					<th className="px-4 py-2 border-b">{searchQuery}AVG</th>
 				</tr>
 			</thead>
 			<tbody>
