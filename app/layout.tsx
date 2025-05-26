@@ -1,8 +1,8 @@
+import { SpeedInsights } from "@vercel/speed-insights/next";
 import type { Metadata } from "next";
-import { SpeedInsights } from "@vercel/speed-insights/next"
 import localFont from "next/font/local";
-import Header from "../components/Header";
 import Footer from "../components/Footer";
+import Header from "../components/Header";
 
 
 import "./globals.css";
