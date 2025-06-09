@@ -1,92 +1,105 @@
 import matplotlib
-matplotlib.use('Agg')
 
-from flask import Flask, request, jsonify
-from flask_cors import CORS
+matplotlib.use("Agg")
+
+from contextlib import asynccontextmanager
+from functools import lru_cache
+from typing import List, Literal
+
 import pandas as pd
-import matplotlib.pyplot as plt
+from fastapi import FastAPI, HTTPException, Query, Request
+from fastapi.middleware.cors import CORSMiddleware
+from pydantic import BaseModel
 
-app = Flask(__name__)
-CORS(app, resources={r"/*": {"origins": ["https://crime-report-web-app.vercel.app"]}})
+CrimeType = Literal["BROKEN_IN", "VEHICLE_THEFT", "FORCED_SEX", "STOLEN", "TOTAL_CRIME"]
+ALLOWED_ORIGINS = ["https://crime-report-web-app.vercel.app", "http://localhost:3000"]
 
-crimes_data_2020 = pd.read_csv('NCVS_2020.csv')
-all_crime = crimes_data_2020.copy()
 
-def filter_and_adjust_age_group(df: pd.DataFrame) -> pd.DataFrame:
+class Dataset(BaseModel):
+    label: str
+    data: List[float]
+    backgroundColor: str
+    borderColor: str
+    borderWidth: int
+
+
+class ChartData(BaseModel):
+    labels: List[str]
+    datasets: List[Dataset]
+
+
+# --- App init ---
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    raw = pd.read_csv("NCVS_2020.csv")
+    app.state.df = filter_and_adjust(raw)
+    yield
+
+
+app = FastAPI(
+    title="Crime Analysis API",
+    version="1.0",
+    description="Group and average NCVS crime data",
+    lifespan=lifespan,
+)
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=ALLOWED_ORIGINS,
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
+
+@app.middleware("http")
+async def check_origin(request: Request, call_next):
     """
-    Filters and adjusts specific columns in the DataFrame to binary values.
-
-    This function takes a DataFrame and applies a transformation to the 'BROKEN_IN',
-    'VEHICLE_THEFT', and 'FORCED_SEX' columns. The transformation converts the values
-    in these columns to binary values: 1 if the original value is 1, otherwise 0.
-
-    Parameters:
-    df (pd.DataFrame): The input DataFrame containing the columns to be adjusted.
-
-    Returns:
-    pd.DataFrame: A new DataFrame with the specified columns adjusted to binary values.
+    Middleware to check the request origin against allowed origins.
     """
-    adjusted_func = lambda x: 1 if x == 1 else 0
-    filtered_df = df.copy()
-    filtered_df['BROKEN_IN'] = filtered_df['BROKEN_IN'].apply(adjusted_func)
-    filtered_df['VEHICLE_THEFT'] = filtered_df['VEHICLE_THEFT'].apply(adjusted_func)
-    filtered_df['FORCED_SEX'] = filtered_df['FORCED_SEX'].apply(adjusted_func)
-    filtered_df['STOLEN'] = filtered_df['STOLEN'].apply(adjusted_func)
-    filtered_df['TOTAL_CRIME'] = filtered_df['BROKEN_IN'] + filtered_df['VEHICLE_THEFT'] + filtered_df['FORCED_SEX'] + filtered_df['STOLEN']
-    return filtered_df
+    origin = request.headers.get("origin")
+    if not origin or origin not in ALLOWED_ORIGINS:
+        raise HTTPException(403, "Origin not permitted")
+    return await call_next(request)
 
-filtered_by_age_and_adjusted_results = filter_and_adjust_age_group(crimes_data_2020)
 
-def filtering_and_grouping(main_dataframe: pd.DataFrame, list_of_columns_of_interest: list, variable: str) -> pd.DataFrame:
+# --- Data loading & preprocessing ---
+def filter_and_adjust(df: pd.DataFrame) -> pd.DataFrame:
+    """Filter and adjust the DataFrame for analysis."""
+    df = df.copy()
+    for col in ["BROKEN_IN", "VEHICLE_THEFT", "FORCED_SEX", "STOLEN"]:
+        df[col] = (df[col] == 1).astype(int)
+    df["TOTAL_CRIME"] = df[["BROKEN_IN", "VEHICLE_THEFT", "FORCED_SEX", "STOLEN"]].sum(
+        axis=1
+    )
+    return df
+
+
+@lru_cache(maxsize=32)
+def make_chart(crime: CrimeType, group_by: str) -> ChartData:
+    """Create a chart data object for the specified crime and grouping."""
+    df = app.state.df
+    if group_by not in df.columns:
+        raise HTTPException(400, f"Invalid group_by: {group_by}")
+    grouped = df.groupby(group_by)[[crime]].mean()
+    labels = grouped.index.astype(str).tolist()
+    data = grouped[crime].tolist()
+    ds = Dataset(
+        label=f"{crime}_AVERAGES",
+        data=data,
+        backgroundColor="rgba(75,192,192,0.2)",
+        borderColor="rgba(75,192,192,1)",
+        borderWidth=1,
+    )
+    return ChartData(labels=labels, datasets=[ds])
+
+
+# --- Endpoint ---
+@app.get("/api/home", response_model=ChartData, summary="Get averaged crime data")
+def get_crime(
+    crime: CrimeType = Query(..., description="Which crime to average"),
+    group_by: str = Query(..., description="Column to group by, e.g. AGE"),
+) -> ChartData:
     """
-    Groups the DataFrame by a specified variable and calculates the mean of selected columns.
-
-    This function takes a DataFrame and groups it by the specified variable. It then calculates
-    the mean for each group for the columns listed in `list_of_columns_of_interest`.
-
-    Parameters:
-    main_dataframe (pd.DataFrame): The input DataFrame containing the data to be grouped.
-    list_of_columns_of_interest (list): A list of column names for which the mean will be calculated.
-    variable (str): The column name by which to group the DataFrame.
-
-    Returns:
-    pd.DataFrame: A new DataFrame with the mean values of the specified columns for each group.
+    Get averaged crime data grouped by a specified column.
     """
-    grouped_data_mean = main_dataframe.groupby(variable)[list_of_columns_of_interest].mean()
-    return grouped_data_mean
-
-@app.route('/', methods=['GET'])
-def get_crime_data():
-    """
-    Retrieves crime data based on query parameters and returns it as JSON.
-
-    Query Parameters:
-    crime (str): The type of crime to analyze.
-    group_by (str): The column by which to group the data.
-
-    Returns:
-    JSON: The grouped data or an error message.
-    """
-    crime_type = request.args.get('crime', '')
-    group_by = request.args.get('group_by', '')
-    
-    if crime_type not in filtered_by_age_and_adjusted_results.columns:
-        return jsonify({"error": "Invalid crime type"}), 400
-
-    grouped_data = filtering_and_grouping(filtered_by_age_and_adjusted_results, [crime_type], group_by)
-
-    # Convert the grouped DataFrame to a JSON-compatible format
-    json_data = {
-        "labels": grouped_data.index.tolist(),
-        "datasets": [{
-            "label": f"{crime_type}_AVERAGES",
-            "data": grouped_data[crime_type].tolist(),
-            "backgroundColor": "rgba(75, 192, 192, 0.2)",
-            "borderColor": "rgba(75, 192, 192, 1)",
-            "borderWidth": 1,
-        }]
-    }
-    return jsonify(json_data), 200
-
-if __name__ == "__main__":
-    app.run(port=5050, debug=True)
+    return make_chart(crime, group_by)
